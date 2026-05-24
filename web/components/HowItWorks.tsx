@@ -8,7 +8,7 @@ const STEPS: ReadonlyArray<Step> = [
   {
     n: "01",
     title: "Connect wallet",
-    body: "Use any wallet on Mezo testnet (chain 31611). BTC pays the gas.",
+    body: "Use a wallet on Mezo testnet. BTC pays the gas.",
   },
   {
     n: "02",

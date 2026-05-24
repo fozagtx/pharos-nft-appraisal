@@ -114,7 +114,7 @@ export function VaultActions() {
     !isConnected || !vaultAddr || busy || ownerMismatch || readsLoading || hasReadError;
 
   const blocker = !vaultAddr
-    ? "Setup missing"
+    ? "Vault not connected"
     : !isConnected
       ? "Connect wallet to act"
       : readsLoading
@@ -241,7 +241,7 @@ export function VaultActions() {
         ? STATUS_LABEL[status]
         : blocker
           ? "Action blocked"
-          : "Ready";
+          : isActive ? "Manage position" : "Open position";
   const actionDetail = error
     ? trimErr(error.message)
     : hasReadError
@@ -257,7 +257,6 @@ export function VaultActions() {
       <ActionNotice tone={actionTone} title={actionTitle} detail={actionDetail} />
 
       <div className="action-context" aria-label="Position context">
-        <span>{vaultAddr ? "Ready" : "Setup missing"}</span>
         <span>{vaultOwner ? `Owner ${shortAddr(vaultOwner as string)}` : "Connect wallet"}</span>
         <span>{isActive ? "Active" : "Not opened"}</span>
       </div>

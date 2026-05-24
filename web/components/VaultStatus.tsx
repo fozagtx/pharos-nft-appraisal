@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccount, useReadContracts } from "wagmi";
+import { useReadContracts } from "wagmi";
 import { formatEther } from "viem";
 import { MezoCirclesVaultAbi } from "@/lib/abi";
 import { VAULT_ADDRESS } from "@/lib/mezo";
@@ -23,9 +23,10 @@ const STATUS_LABEL: Record<number, string> = {
   4: "Closed (redeemed)",
 };
 
+type TokenKind = "btc" | "musd";
+
 export function VaultStatus() {
-  const { address } = useAccount();
-  const enabled = Boolean(VAULT_ADDRESS) && Boolean(address);
+  const enabled = Boolean(VAULT_ADDRESS);
 
   const { data, isLoading, isError, error } = useReadContracts({
     contracts: VAULT_ADDRESS
@@ -44,40 +45,33 @@ export function VaultStatus() {
 
   if (!VAULT_ADDRESS) {
     return (
-      <StateCard
-        tone="warning"
-        eyebrow="Configuration"
-        title="Setup missing"
-        detail={
-          <>
-            Set <code>NEXT_PUBLIC_VAULT_ADDRESS</code> in <code>web/.env.local</code>.
-          </>
-        }
-      >
-        <Row label="Network" value="Mezo testnet" />
-        {priceRow}
-      </StateCard>
+      <div className="card status-card monitor-card">
+        <PositionCardHeading />
+        <StatusTop
+          eyebrow="Liquidity monitor"
+          title="Waiting for position"
+          tone="neutral"
+          label="Standby"
+        />
+        <p className="state-note">
+          Connect a deployed position to track ICR, liquidation price, and BTC drop buffer.
+        </p>
+        <div className="status-rows">
+          <Row label="Network" value="Mezo testnet" />
+          <Row label="Monitor" value="ICR, liquidation price, BTC drop buffer" />
+          <Row label="Liquidation floor" value="110% ICR" />
+          {priceRow}
+        </div>
+      </div>
     );
   }
 
-  if (!address) {
-    return (
-      <StateCard
-        tone="neutral"
-        eyebrow="Wallet"
-        title="Connect owner wallet"
-        detail="Position reads start after a wallet connects."
-      >
-        <Row label="Network" value="Mezo testnet" />
-        {priceRow}
-      </StateCard>
-    );
-  }
 
   if (isLoading) {
     return (
-      <div className="card status-card" aria-busy="true">
-        <StatusTop eyebrow="Position" title="Reading position" tone="neutral" label="Syncing" />
+      <div className="card status-card monitor-card" aria-busy="true">
+        <PositionCardHeading />
+        <StatusTop eyebrow="Liquidity monitor" title="Reading position" tone="neutral" label="Syncing" />
         <SkeletonRows count={4} />
         {priceRow && <div className="status-rows">{priceRow}</div>}
       </div>
@@ -137,8 +131,9 @@ export function VaultStatus() {
       {zone && (zone === "liquidatable" || zone === "danger") && (
         <LiquidationBanner zone={zone} icrPct={icr ?? 0} />
       )}
-      <div className="card status-card">
-        <StatusTop eyebrow="Position" title={statusLabel} tone={statusTone} label={statusLabel} />
+      <div className="card status-card monitor-card">
+        <PositionCardHeading />
+        <StatusTop eyebrow="Liquidity monitor" title={statusLabel} tone={statusTone} label={statusLabel} />
 
         {isActive && hasPosition ? (
           <div className="metric-grid">
@@ -155,8 +150,8 @@ export function VaultStatus() {
                 )
               }
             />
-            <Metric label="Collateral" value={`${formatBtc(collateral)} BTC`} />
-            <Metric label="Debt" value={`${formatMusd(debt)} MUSD`} />
+            <Metric token="btc" label="Collateral" value={`${formatBtc(collateral)} BTC`} />
+            <Metric token="musd" label="Debt" value={`${formatMusd(debt)} MUSD`} />
           </div>
         ) : (
           <p className="state-note">
@@ -167,8 +162,8 @@ export function VaultStatus() {
         )}
 
         <div className="status-rows">
-          <Row label="Debt" value={`${formatMusd(debt)} MUSD`} />
-          <Row label="Collateral" value={`${formatBtc(collateral)} BTC`} />
+          <Row token="musd" label="Debt" value={`${formatMusd(debt)} MUSD`} />
+          <Row token="btc" label="Collateral" value={`${formatBtc(collateral)} BTC`} />
 
           {isActive && hasPosition && collUsd !== null && (
             <Row label="Coll. value" value={formatUsd(collUsd)} />
@@ -192,6 +187,20 @@ export function VaultStatus() {
   );
 }
 
+function PositionCardHeading() {
+  return (
+    <div className="position-card-heading">
+      <div>
+        <h2 className="section-eyebrow">Position</h2>
+        <span>Your BTC and MUSD</span>
+      </div>
+      <a href="#borrowing-limits" className="card-jump-link">
+        Limits
+      </a>
+    </div>
+  );
+}
+
 function LiquidationBanner({ zone, icrPct }: { zone: "liquidatable" | "danger"; icrPct: number }) {
   const message =
     zone === "liquidatable"
@@ -207,10 +216,21 @@ function LiquidationBanner({ zone, icrPct }: { zone: "liquidatable" | "danger"; 
   );
 }
 
-function Row({ label, value }: { label: string; value: React.ReactNode }) {
+function Row({
+  label,
+  value,
+  token,
+}: {
+  label: string;
+  value: React.ReactNode;
+  token?: TokenKind;
+}) {
   return (
     <div className="card-row">
-      <span className="label">{label}</span>
+      <span className="label">
+        {token && <TokenMark kind={token} />}
+        <span>{label}</span>
+      </span>
       <span className="value">{value}</span>
     </div>
   );
@@ -233,6 +253,7 @@ function StateCard({
 }) {
   return (
     <div className={`card state-card state-${tone}`}>
+      <PositionCardHeading />
       <StatusTop eyebrow={eyebrow} title={title} tone={tone} label={title} />
       <p className="state-note">{detail}</p>
       {children && <div className="status-rows">{children}</div>}
@@ -265,10 +286,29 @@ function StatusTop({
   );
 }
 
-function Metric({ label, value }: { label: string; value: React.ReactNode }) {
+function TokenMark({ kind }: { kind: TokenKind }) {
+  return (
+    <span className={`token-mark token-mark-${kind}`} aria-hidden="true">
+      {kind === "btc" ? "₿" : "M"}
+    </span>
+  );
+}
+
+function Metric({
+  label,
+  value,
+  token,
+}: {
+  label: string;
+  value: React.ReactNode;
+  token?: TokenKind;
+}) {
   return (
     <div className="metric">
-      <span className="metric-label">{label}</span>
+      <span className="metric-label">
+        {token && <TokenMark kind={token} />}
+        <span>{label}</span>
+      </span>
       <span className="metric-value">{value}</span>
     </div>
   );

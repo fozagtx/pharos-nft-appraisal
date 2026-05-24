@@ -2,40 +2,36 @@
 
 import { VaultStatus } from "@/components/VaultStatus";
 import { VaultActions } from "@/components/VaultActions";
-import { MEZO_TESTNET, VAULT_ADDRESS } from "@/lib/mezo";
+import { GettingStartedGuide } from "@/components/GettingStartedGuide";
+import {
+  MotionAside,
+  MotionSection,
+  MotionWorkbench,
+  MotionWorkbenchGrid,
+} from "@/components/PageMotion";
+import { MEZO_TESTNET } from "@/lib/mezo";
 
 export default function App() {
   return (
-    <main className="workbench">
-      <header className="workbench-header">
-        <div>
-          <p className="workbench-kicker">No selling. No wrapping. No bank.</p>
-          <h1>Borrow MUSD against BTC</h1>
-        </div>
-        <div className="workbench-meta" aria-label="Deployment state">
-          <span>{VAULT_ADDRESS ? "Ready" : "Setup needed"}</span>
-        </div>
-      </header>
-
-      <div className="workbench-grid">
-        <aside>
-          <div className="panel-heading">
-            <h2 className="section-eyebrow">Position</h2>
-            <span>Your BTC and MUSD</span>
-          </div>
+    <MotionWorkbench>
+      <MotionWorkbenchGrid>
+        <MotionAside>
           <VaultStatus />
           <Constraints />
-        </aside>
+        </MotionAside>
 
-        <section>
+        <MotionSection>
           <div className="panel-heading">
             <h2 className="section-eyebrow">Actions</h2>
-            <span>Open, repay, close</span>
+            <div className="panel-tools">
+              <span>Open, repay, close</span>
+              <GettingStartedGuide />
+            </div>
           </div>
           <VaultActions />
-        </section>
-      </div>
-    </main>
+        </MotionSection>
+      </MotionWorkbenchGrid>
+    </MotionWorkbench>
   );
 }
 
@@ -48,7 +44,7 @@ function Constraints() {
     ["MUSD", shortAddr(MEZO_TESTNET.musd)],
   ];
   return (
-    <div className="card protocol-card">
+    <div id="borrowing-limits" className="card protocol-card">
       <h3 className="section-eyebrow">Borrowing limits</h3>
       {items.map(([k, v]) => (
         <div key={k} className="card-row">
