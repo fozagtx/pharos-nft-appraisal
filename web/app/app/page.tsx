@@ -2,6 +2,7 @@
 
 import { VaultStatus } from "@/components/VaultStatus";
 import { VaultActions } from "@/components/VaultActions";
+import { GettingStartedGuide } from "@/components/GettingStartedGuide";
 import {
   MotionAside,
   MotionSection,
@@ -13,6 +14,13 @@ import { MEZO_TESTNET } from "@/lib/mezo";
 export default function App() {
   return (
     <MotionWorkbench>
+      <div className="dashboard-head">
+        <div>
+          <h1 className="section-eyebrow">Dashboard</h1>
+          <span>Position, limits, actions</span>
+        </div>
+        <GettingStartedGuide />
+      </div>
       <MotionWorkbenchGrid>
         <MotionAside>
           <VaultStatus />

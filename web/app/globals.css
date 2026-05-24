@@ -537,6 +537,24 @@ body {
   font-family: var(--font-mono);
   font-feature-settings: "tnum";
 }
+.dashboard-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.dashboard-head > div {
+  min-width: 0;
+}
+.dashboard-head span {
+  display: block;
+  margin-top: var(--space-3xs);
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-feature-settings: "tnum";
+}
 
 @media (max-width: 40rem) {
   .workbench {
@@ -544,6 +562,9 @@ body {
   }
   .panel-heading > span {
     display: none;
+  }
+  .dashboard-head {
+    align-items: flex-start;
   }
 }
 
@@ -1545,12 +1566,6 @@ body {
   background: color-mix(in oklch, var(--color-ink) 24%, var(--color-paper-2));
 }
 @media (min-width: 64rem) {
-  .app-main {
-    padding-left: clamp(10rem, 14vw, 13rem);
-  }
-  .app-main.app-main-gate {
-    padding-left: var(--space-lg);
-  }
   .lock-preview-grid {
     grid-template-columns: minmax(20rem, 0.92fr) minmax(0, 1.5fr);
     gap: var(--space-xl);
@@ -1572,22 +1587,16 @@ body {
 }
 @media (min-width: 64rem) {
   .sidebar {
-    position: fixed;
-    left: var(--space-md);
-    top: 50dvh;
-    transform: translateY(-50%);
-    width: clamp(9.5rem, 11vw, 11.5rem);
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: var(--space-sm);
-    flex-wrap: nowrap;
-    border: var(--rule-hair) solid var(--color-rule);
-    border-radius: 8px;
+    border-bottom: var(--rule-hair) solid var(--color-rule);
     padding: var(--space-sm);
     background: color-mix(in oklch, var(--color-paper-2) 92%, transparent);
     -webkit-backdrop-filter: blur(14px) saturate(120%);
     backdrop-filter: blur(14px) saturate(120%);
-    box-shadow: 0 18px 36px -28px oklch(0% 0 0 / 0.28);
+    box-shadow: 0 12px 28px -28px oklch(0% 0 0 / 0.28);
   }
 }
 
@@ -1607,14 +1616,14 @@ body {
 }
 @media (min-width: 64rem) {
   .sidebar-top {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
   }
   .sidebar-wordmark {
     font-size: var(--text-md);
   }
 }
-.sidebar-demo-tag {
+.dashboard-demo-trigger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1634,31 +1643,31 @@ body {
               color var(--dur-short) var(--ease-out),
               transform var(--dur-short) var(--ease-out);
 }
-.sidebar-demo-dot {
+.dashboard-demo-dot {
   inline-size: 0.42rem;
   block-size: 0.42rem;
   border-radius: var(--radius-pill);
   background: var(--color-accent);
   box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-accent) 18%, transparent);
 }
-.sidebar-demo-tag:hover {
+.dashboard-demo-trigger:hover {
   background: var(--color-ink);
   border-color: var(--color-ink);
   color: var(--color-paper);
 }
-.sidebar-demo-tag:active {
+.dashboard-demo-trigger:active {
   transform: translateY(1px);
 }
-.sidebar-demo-tag:focus-visible {
+.dashboard-demo-trigger:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .sidebar-demo-dot {
-    animation: sidebar-demo-pulse 1.7s var(--ease-in-out) infinite;
+  .dashboard-demo-dot {
+    animation: dashboard-demo-pulse 1.7s var(--ease-in-out) infinite;
   }
 }
-@keyframes sidebar-demo-pulse {
+@keyframes dashboard-demo-pulse {
   0%, 100% {
     transform: scale(0.82);
     opacity: 0.62;
@@ -1708,12 +1717,12 @@ body {
 @media (min-width: 64rem) {
   .sidebar-bottom {
     margin-top: 0;
-    margin-left: 0;
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-xs);
-    padding-top: var(--space-sm);
-    border-top: var(--rule-hair) solid var(--color-rule);
+    margin-left: auto;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-sm);
+    padding-top: 0;
+    border-top: 0;
   }
 }
 .sidebar-wallet {
@@ -1776,7 +1785,7 @@ body {
 @media (min-width: 64rem) {
   .sidebar-disconnect,
   .sidebar-connect {
-    width: 100%;
+    width: auto;
   }
 }
 @media (max-width: 40rem) {

@@ -52,11 +52,11 @@ export function GettingStartedGuide() {
     <>
       <button
         type="button"
-        className="sidebar-demo-tag"
+        className="dashboard-demo-trigger"
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
       >
-        <span className="sidebar-demo-dot" aria-hidden="true" />
+        <span className="dashboard-demo-dot" aria-hidden="true" />
         <span>Demo</span>
       </button>
 
