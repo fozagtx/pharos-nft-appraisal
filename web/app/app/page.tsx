@@ -2,11 +2,17 @@
 
 import { VaultStatus } from "@/components/VaultStatus";
 import { VaultActions } from "@/components/VaultActions";
+import {
+  MotionAside,
+  MotionSection,
+  MotionWorkbench,
+  MotionWorkbenchGrid,
+} from "@/components/PageMotion";
 import { MEZO_TESTNET, VAULT_ADDRESS } from "@/lib/mezo";
 
 export default function App() {
   return (
-    <main className="workbench">
+    <MotionWorkbench>
       <header className="workbench-header">
         <div>
           <p className="workbench-kicker">No selling. No wrapping. No bank.</p>
@@ -17,25 +23,25 @@ export default function App() {
         </div>
       </header>
 
-      <div className="workbench-grid">
-        <aside>
+      <MotionWorkbenchGrid>
+        <MotionAside>
           <div className="panel-heading">
             <h2 className="section-eyebrow">Position</h2>
             <span>Your BTC and MUSD</span>
           </div>
           <VaultStatus />
           <Constraints />
-        </aside>
+        </MotionAside>
 
-        <section>
+        <MotionSection>
           <div className="panel-heading">
             <h2 className="section-eyebrow">Actions</h2>
             <span>Open, repay, close</span>
           </div>
           <VaultActions />
-        </section>
-      </div>
-    </main>
+        </MotionSection>
+      </MotionWorkbenchGrid>
+    </MotionWorkbench>
   );
 }
 

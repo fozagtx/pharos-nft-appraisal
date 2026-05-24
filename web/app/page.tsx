@@ -3,6 +3,13 @@ import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { ConnectRedirect } from "@/components/ConnectRedirect";
 import { HowItWorks } from "@/components/HowItWorks";
+import {
+  MotionCta,
+  MotionFact,
+  MotionFacts,
+  MotionHeroTitle,
+  MotionLede,
+} from "@/components/PageMotion";
 
 /* Hallmark · genre: modern-minimal · macrostructure: Marquee Hero · theme: paper-amber
  * H1 Marquee knobs: size=xxl, alignment=left-bias, underlay=rule-below
@@ -17,39 +24,39 @@ export default function Landing() {
       <Nav />
       <main className="landing">
         <section className="marquee">
-          <h1 className="display">
+          <MotionHeroTitle>
             Borrow dollars
             <br />
             against your Bitcoin.
-          </h1>
+          </MotionHeroTitle>
         </section>
 
         <hr className="rule-thick" aria-hidden />
 
         <section className="below">
-          <div className="lede">
+          <MotionLede>
             <p>
               No selling, no wrapping, no bank. Deposit BTC, borrow MUSD, and
               repay when ready to release your Bitcoin back.
             </p>
-          </div>
+          </MotionLede>
 
           <HowItWorks />
 
-          <dl className="facts">
+          <MotionFacts>
             <Fact term="Minimum debt" value="1,800 MUSD" note="Per vault, protocol-set." />
             <Fact term="Minimum ICR" value="110%" note="Below this, vaults are liquidatable." />
             <Fact term="Interest" value="1–5% APR" note="Set by InterestRateManager, locked at open." />
             <Fact term="Redemption fee" value="0.75%" note="Charged on BTC released via redemption." />
             <Fact term="Gas token" value="BTC" note="Mezo pays gas natively in BTC." />
             <Fact term="Network" value="Mezo testnet" note="Real testnet, not mock." />
-          </dl>
+          </MotionFacts>
 
-          <div className="cta-row">
+          <MotionCta>
             <Link href="/app" className="primary-cta">
               Borrow MUSD
             </Link>
-          </div>
+          </MotionCta>
         </section>
       </main>
       <Footer />
@@ -59,10 +66,10 @@ export default function Landing() {
 
 function Fact({ term, value, note }: { term: string; value: string; note: string }) {
   return (
-    <div className="fact">
+    <MotionFact>
       <dt>{term}</dt>
       <dd className="value">{value}</dd>
       <dd className="note">{note}</dd>
-    </div>
+    </MotionFact>
   );
 }

@@ -1,7 +1,7 @@
 /* Hallmark · genre: modern-minimal · macrostructure: Marquee Hero (marketing) + Workbench (app)
  * theme: light paper · zero-chroma greys · warm-amber accent (oklch 74% 0.16 65)
  * nav: N5 Floating pill · footer: Ft2 Inline single line
- * enrichment: none (typography only) · motion: cut
+ * enrichment: none (typography only) · motion: restrained
  * design-system: design.md · designed-as-app
  * pre-emit critique: P5 H4 E4 S4 R5 V4
  */
@@ -76,6 +76,8 @@ body {
   font-size: var(--text-sm);
   white-space: nowrap;
   max-width: calc(100vw - var(--space-lg));
+  transform-origin: top center;
+  will-change: transform, box-shadow;
 }
 .nav-pill .wordmark {
   font-weight: 600;
