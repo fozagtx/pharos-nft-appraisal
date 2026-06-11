@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="Pharos NFT Appraisal logo" width="180">
+  <img src="assets/logo.png" alt="Pharos NFT Appraisal logo" width="180">
 </p>
 
 # Pharos NFT Appraisal
