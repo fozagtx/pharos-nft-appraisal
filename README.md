@@ -1,93 +1,153 @@
-# mezoCircles
+# Pharos NFT Appraisal
 
-Borrow dollars against your Bitcoin. Deposit BTC, borrow MUSD, and repay when ready — no selling, no wrapping, no bank.
+A Pharos-compatible skill for appraising NFT collections on Ethereum and Base. It extracts an NFT contract address and chain from a user prompt, fetches collection metadata from Alchemy, and returns a cautious, source-grounded appraisal.
 
-## What this is
+This skill is built for the Skill-to-Agent Dual Cascade Hackathon as a reusable module that any agent can call.
 
-`MezoCirclesVault` is a per-user smart contract that owns a single Mezo MUSD Trove on behalf of its owner. The owner gets four operations — `openVault`, `addCollateral`, `repayDebt`, `closeVault` — instead of the raw Liquity-v2-fork surface. Future work can add liquidation protection and repayment automation, but v1 is intentionally focused on simple BTC-backed borrowing.
+## Features
 
-The hackathon scope is intentionally narrow. See `docs/research/mezo-validation.md` for the validated facts about Mezo that informed which features are in v1 vs deferred.
+- Extracts NFT contract address from natural-language prompts
+- Supports Ethereum mainnet and Base mainnet
+- Uses OpenAI for structured extraction when available
+- Falls back to regex address extraction and chain keyword detection
+- Fetches NFT collection metadata from Alchemy
+- Returns floor price when Alchemy/OpenSea metadata provides it
+- Produces risk flags, limitations, citations, and a non-financial appraisal summary
 
-## Scope (week 1)
+## Requirements
 
-- [x] `MezoCirclesVault.sol` — per-user vault wrapping Mezo `BorrowerOperations`
-- [x] Mock-based unit tests (7/7 passing)
-- [x] Deploy script targeting Mezo testnet
-- [x] Mezo capability audit (`docs/research/mezo-validation.md`)
-- [x] Mezo testnet deploy + manual e2e test
-- [x] Frontend
-- [ ] Auto-yield keeper (deferred to week 3)
-- [ ] Account abstraction / passkeys (cut from v1 — no Mezo support)
+- Python 3.10+
+- `ALCHEMY_API_KEY`
 
-## Expansion lanes
+Optional:
 
-Reputation-based lending, AI automation, and RWA yield/credit are tracked as
-future research lanes, not v1 features. See `docs/research/expansion-lanes.md`.
+- `OPENAI_API_KEY`
+- `OPENAI_EXTRACT_MODEL`
 
-Current recommendation: keep the live product focused on BTC-backed borrowing,
-then add liquidation protection and repayment automation before exploring any
-RWA or undercollateralized credit surface.
+No third-party Python package is required; the skill uses Python standard-library HTTP utilities.
 
-## Known constraints (validated against Mezo deployment)
-
-- **Min debt per Trove: 1,800 MUSD.** Cannot serve sub-$2k positions.
-- **Interest rate: 1–5% APR**, locked at open. Not "1% flat" as some marketing implies.
-- **Redemption fee: 0.75%** on BTC received.
-- **No ERC-4337 on Mezo today.** mezoCircles uses EOA wallets (MetaMask/UniSat/Xverse + Mezo Passport connector). BTC pays gas natively.
-- **Testnet BTC is faucet-issued**, not bridged real BTC via Threshold. Mainnet uses the canonical tBTC bridge.
-
-## Repository layout
-
-```
-contracts/         Foundry project — MezoCirclesVault.sol + interfaces + tests
-docs/research/     Validation notes informing scope decisions
-.env.example       Mezo RPC + MUSD/BorrowerOperations/TroveManager addresses
-```
-
-## Quickstart
+## Quick Start
 
 ```bash
-cd contracts
-forge install foundry-rs/forge-std --no-commit   # first time only
-forge build
-forge test
+export ALCHEMY_API_KEY="your_alchemy_key"
+python3 scripts/run_appraisal.py --metadata examples/nft-appraisal-input.json --pretty
 ```
 
-Deploy to Mezo testnet:
+Or pipe JSON through stdin:
 
 ```bash
-cp .env.deploy.example .env.deploy        # then fill MEZOCIRCLES_VAULT_OWNER + DEPLOYER_PRIVATE_KEY
-bash scripts/deploy-testnet.sh            # dry-run (no broadcast, balance check only)
-bash scripts/deploy-testnet.sh --broadcast
-bash scripts/finalize-deploy.sh 0x<deployed-vault-address>            # verify + patch README
-bash scripts/finalize-deploy.sh 0x<deployed-vault-address> --commit   # also commit broadcast artifact
-
-# Once the vault is deployed, open your Trove (min debt 1,800 MUSD, min ICR 110%):
-bash scripts/open-vault.sh 0x<vault-address> 1 1800   # 1 BTC collateral, 1,800 MUSD debt
+printf '%s\n' '{"prompt":"tell me about 0xed5af388653567af2f388e6224dc7c4b3241c544, which is on eth"}' \
+  | python3 scripts/run_appraisal.py --pretty
 ```
 
-To verify the integration before broadcasting real txs, run the fork test against
-the live Mezo testnet:
+## Input
 
-```bash
-MEZO_TESTNET_RPC_URL=https://rpc.test.mezo.org \
-  forge test --match-contract MezoCirclesVaultForkTest \
-  --fork-url $MEZO_TESTNET_RPC_URL -vv
+Natural-language prompt:
+
+```json
+{
+  "prompt": "tell me about 0xed5af388653567af2f388e6224dc7c4b3241c544, which is on eth"
+}
 ```
 
-`.env.deploy` is gitignored. Never commit a private key.
+Explicit target:
 
-## Deployments
+```json
+{
+  "contract_address": "0xed5af388653567af2f388e6224dc7c4b3241c544",
+  "chain": "eth"
+}
+```
 
-| Network | MezoCirclesVault | Owner | Block | Tx |
-|---|---|---|---|---|
-| Mezo testnet (31611) | `0x073F9b59442e63f03b96D2aDe16dc37d40929e20` | `0xBb67c7386e1e4Fb9931129CA09FE577F4B3fFb97` | 13255204 | `0x88d70480ddfb44d90e707f21e3466100164a899023f35db1590794cd10a4973d` |
+Optional API-key metadata is supported, though environment variables are preferred:
 
-Manual e2e open-vault check: `0x01fb54dbc006c09d6a4b53cb9c0f7d575289f88f9278e479e7ab311d64412327`
-opened a live Mezo testnet Trove with 0.001 BTC collateral. The vault forwarded 1,800 MUSD
-to the owner wallet; the on-chain Trove debt reads higher because Mezo adds protocol debt/fees
-on top of the borrowed amount.
+```json
+{
+  "prompt": "Appraise this Base NFT collection: 0x0000000000000000000000000000000000000000",
+  "alchemy_api_key": "optional",
+  "openai_api_key": "optional"
+}
+```
 
-## History
+Supported chain values:
 
-The project was originally an on-chain ROSCA (savings circles) on Mezo. Refocused to a per-user Mezo MUSD Trove autopilot on 2026-05-20. The pre-refocus ROSCA codebase is preserved at the git tag `archive/mezo-circles-2026-05-20`.
+- `eth`
+- `ethereum`
+- `mainnet`
+- `base`
+
+All values normalize to `eth` or `base`.
+
+## Output
+
+The skill returns JSON containing:
+
+- extracted `target`
+- extraction method
+- Alchemy collection metadata
+- OpenSea metadata when available
+- floor price when available
+- cautious appraisal summary
+- confidence level
+- risk flags
+- limitations
+- provider citation
+
+Example shape:
+
+```json
+{
+  "status": "success",
+  "skill": "nft_appraisal_skill",
+  "source": "alchemy",
+  "target": {
+    "chain": "eth",
+    "network": "eth-mainnet",
+    "contract_address": "0xed5af388653567af2f388e6224dc7c4b3241c544"
+  },
+  "collection": {
+    "name": "Collection name",
+    "symbol": "SYMBOL",
+    "token_type": "ERC721",
+    "opensea": {
+      "floor_price": 1.23
+    }
+  },
+  "appraisal": {
+    "summary": "Source-grounded, non-financial appraisal.",
+    "confidence": "medium",
+    "risk_flags": [],
+    "limitations": []
+  }
+}
+```
+
+## Error Behavior
+
+Common errors:
+
+- `MISSING_API_KEY`
+- `MISSING_CONTRACT_ADDRESS`
+- `NEEDS_CHAIN`
+- `INVALID_CONTRACT_ADDRESS`
+- `UNSUPPORTED_CHAIN`
+- `ALCHEMY_AUTH_FAILED`
+- `PROVIDER_ERROR`
+- `NOT_FOUND`
+
+If a prompt contains an address but no chain, the skill returns `NEEDS_CHAIN` instead of guessing.
+
+## Safety Notes
+
+This skill does not provide buy, sell, hold, price-target, profit, or investment advice. It does not invent sales, volume, ownership, rarity, or floor data. Appraisal claims are limited to metadata returned by Alchemy.
+
+Unsupported chains are rejected. API keys are never included in output.
+
+## Skill Files
+
+- `SKILL.md` - Pharos skill manifest and agent instructions
+- `scripts/nft_appraisal_skill.py` - reusable `run(metadata)` implementation
+- `scripts/run_appraisal.py` - CLI wrapper
+- `references/io-schema.md` - detailed input/output schema
+- `examples/nft-appraisal-input.json` - sample request
+
