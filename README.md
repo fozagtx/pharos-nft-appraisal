@@ -53,7 +53,7 @@ python3 scripts/run_appraisal.py --metadata examples/nft-appraisal-input.json --
 Or pipe JSON through stdin:
 
 ```bash
-printf '%s\n' '{"prompt":"appraise this Pharos NFT contract: 0x0000000000000000000000000000000000000000"}' \
+printf '%s\n' '{"prompt":"appraise this Pharos Atlantic NFT contract: 0x22614Ca3393E83DA6411A45f012239Bafc258ABD","network":"pharos-atlantic"}' \
   | python3 scripts/run_appraisal.py --pretty
 ```
 
@@ -63,7 +63,8 @@ Natural-language prompt:
 
 ```json
 {
-  "prompt": "appraise this Pharos NFT contract: 0x0000000000000000000000000000000000000000"
+  "prompt": "appraise this Pharos Atlantic NFT contract: 0x22614Ca3393E83DA6411A45f012239Bafc258ABD",
+  "network": "pharos-atlantic"
 }
 ```
 
@@ -71,8 +72,8 @@ Explicit target:
 
 ```json
 {
-  "contract_address": "0x0000000000000000000000000000000000000000",
-  "network": "pharos"
+  "contract_address": "0x22614Ca3393E83DA6411A45f012239Bafc258ABD",
+  "network": "pharos-atlantic"
 }
 ```
 
@@ -107,15 +108,15 @@ Example shape:
   "skill": "nft_appraisal_skill",
   "source": "pharos-json-rpc",
   "target": {
-    "network": "pharos-mainnet",
-    "chain_id": 1672,
-    "contract_address": "0x0000000000000000000000000000000000000000"
+    "network": "pharos-atlantic",
+    "chain_id": 688689,
+    "contract_address": "0x22614Ca3393E83DA6411A45f012239Bafc258ABD"
   },
   "collection": {
-    "name": "Collection name",
-    "symbol": "SYMBOL",
+    "name": "Pharos Atlantic Testnet Badge",
+    "symbol": "PATB",
     "token_standard": "ERC721",
-    "total_supply": 10000,
+    "total_supply": 658217,
     "contract_uri": "ipfs://..."
   },
   "appraisal": {

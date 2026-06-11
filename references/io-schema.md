@@ -4,9 +4,9 @@
 
 ```json
 {
-  "prompt": "Appraise this Pharos NFT contract: 0x0000000000000000000000000000000000000000",
-  "contract_address": "0x0000000000000000000000000000000000000000",
-  "network": "pharos",
+  "prompt": "Appraise this Pharos Atlantic NFT contract: 0x22614Ca3393E83DA6411A45f012239Bafc258ABD",
+  "contract_address": "0x22614Ca3393E83DA6411A45f012239Bafc258ABD",
+  "network": "pharos-atlantic",
   "rpc_url": "optional custom Pharos RPC URL",
   "openai_api_key": "optional",
   "timeout_seconds": 20
@@ -30,19 +30,19 @@ Default network: live Pharos mainnet RPC.
   "skill": "nft_appraisal_skill",
   "source": "pharos-json-rpc",
   "target": {
-    "network": "pharos-mainnet",
-    "chain_id": 1672,
-    "contract_address": "0x...",
-    "rpc_url": "https://rpc.pharos.xyz/",
-    "explorer_url": null
+    "network": "pharos-atlantic",
+    "chain_id": 688689,
+    "contract_address": "0x22614Ca3393E83DA6411A45f012239Bafc258ABD",
+    "rpc_url": "https://atlantic.dplabs-internal.com",
+    "explorer_url": "https://atlantic.pharosscan.xyz"
   },
   "collection": {
-    "address": "0x...",
-    "name": "string-or-null",
-    "symbol": "string-or-null",
-    "token_standard": "ERC721|ERC1155|unknown",
-    "total_supply": 10000,
-    "contract_uri": "string-or-null",
+    "address": "0x22614Ca3393E83DA6411A45f012239Bafc258ABD",
+    "name": "Pharos Atlantic Testnet Badge",
+    "symbol": "PATB",
+    "token_standard": "ERC721",
+    "total_supply": 658217,
+    "contract_uri": "ipfs://QmcH9u5J2yLCv3AyhHBQ6yVcJT58Ts5wbzxBsB3CmrVTLV/0",
     "metadata_available": true
   },
   "interfaces": {

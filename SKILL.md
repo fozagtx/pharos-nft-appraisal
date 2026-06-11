@@ -29,7 +29,7 @@ python3 scripts/run_appraisal.py --metadata examples/nft-appraisal-input.json --
 Or through stdin:
 
 ```bash
-printf '%s\n' '{"prompt":"appraise this Pharos NFT contract: 0x0000000000000000000000000000000000000000"}' \
+printf '%s\n' '{"prompt":"appraise this Pharos Atlantic NFT contract: 0x22614Ca3393E83DA6411A45f012239Bafc258ABD","network":"pharos-atlantic"}' \
   | python3 scripts/run_appraisal.py --pretty
 ```
 
@@ -37,8 +37,8 @@ printf '%s\n' '{"prompt":"appraise this Pharos NFT contract: 0x00000000000000000
 
 ```json
 {
-  "prompt": "appraise this Pharos NFT contract: 0x0000000000000000000000000000000000000000",
-  "network": "pharos",
+  "prompt": "appraise this Pharos Atlantic NFT contract: 0x22614Ca3393E83DA6411A45f012239Bafc258ABD",
+  "network": "pharos-atlantic",
   "rpc_url": "optional custom Pharos RPC URL",
   "openai_api_key": "optional, prefer OPENAI_API_KEY"
 }
@@ -48,8 +48,8 @@ You can also bypass extraction:
 
 ```json
 {
-  "contract_address": "0x0000000000000000000000000000000000000000",
-  "network": "pharos"
+  "contract_address": "0x22614Ca3393E83DA6411A45f012239Bafc258ABD",
+  "network": "pharos-atlantic"
 }
 ```
 
