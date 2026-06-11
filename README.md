@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.svg" alt="Pharos NFT Appraisal logo" width="180">
+</p>
+
 # Pharos NFT Appraisal
 
 A Pharos-compatible skill for appraising NFT collections on Ethereum and Base. It extracts an NFT contract address and chain from a user prompt, fetches collection metadata from Alchemy, and returns a cautious, source-grounded appraisal.
@@ -150,4 +154,3 @@ Unsupported chains are rejected. API keys are never included in output.
 - `scripts/run_appraisal.py` - CLI wrapper
 - `references/io-schema.md` - detailed input/output schema
 - `examples/nft-appraisal-input.json` - sample request
-
